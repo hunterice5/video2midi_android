@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <View
+        android:id="@+id/previewColor"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginBottom="24dp"
+        android:background="@color/primary"/>
+
+    <!-- Red -->
+    <TextView
+        android:id="@+id/tvR"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="R: 0"
+        android:textSize="14sp"
+        android:textColor="@color/primary_text"/>
+
+    <SeekBar
+        android:id="@+id/seekR"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Green -->
+    <TextView
+        android:id="@+id/tvG"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="G: 0"
+        android:textSize="14sp"
+        android:textColor="@color/primary_text"/>
+
+    <SeekBar
+        android:id="@+id/seekG"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Blue -->
+    <TextView
+        android:id="@+id/tvB"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="B: 0"
+        android:textSize="14sp"
+        android:textColor="@color/primary_text"/>
+
+    <SeekBar
+        android:id="@+id/seekB"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>

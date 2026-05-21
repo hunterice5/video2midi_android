@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_title"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp"
+            android:textColor="@color/primary_text"/>
+
+        <!-- MIDI Settings Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/midi_settings"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:textColor="@color/primary"/>
+
+        <!-- Octave -->
+        <TextView
+            android:id="@+id/tvOctave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/octave"
+            android:textSize="14sp"
+            android:textColor="@color/primary_text"/>
+
+        <SeekBar
+            android:id="@+id/seekOctave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Tempo -->
+        <TextView
+            android:id="@+id/tvTempo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/tempo"
+            android:textSize="14sp"
+            android:textColor="@color/primary_text"/>
+
+        <SeekBar
+            android:id="@+id/seekTempo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Sensitivity -->
+        <TextView
+            android:id="@+id/tvSensitivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/sensitivity"
+            android:textSize="14sp"
+            android:textColor="@color/primary_text"/>
+
+        <SeekBar
+            android:id="@+id/seekSensitivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Min Duration -->
+        <TextView
+            android:id="@+id/tvMinDuration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/min_duration"
+            android:textSize="14sp"
+            android:textColor="@color/primary_text"/>
+
+        <SeekBar
+            android:id="@+id/seekMinDuration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Key Positions Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/key_positions"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            android:textColor="@color/primary"/>
+
+        <!-- White Key Width -->
+        <TextView
+            android:id="@+id/tvWhiteKeyWidth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/white_key_width"
+            android:textSize="14sp"
+            android:textColor="@color/primary_text"/>
+
+        <SeekBar
+            android:id="@+id/seekWhiteKeyWidth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Black Key Position -->
+        <TextView
+            android:id="@+id/tvBlackKeyPos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/black_key_position"
+            android:textSize="14sp"
+            android:textColor="@color/primary_text"/>
+
+        <SeekBar
+            android:id="@+id/seekBlackKeyPos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Keys Count -->
+        <TextView
+            android:id="@+id/tvKeysCount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/keys_count"
+            android:textSize="14sp"
+            android:textColor="@color/primary_text"/>
+
+        <SeekBar
+            android:id="@+id/seekKeysCount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Options Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/options"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            android:textColor="@color/primary"/>
+
+        <CheckBox
+            android:id="@+id/cbNotesOverlap"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/notes_overlap"
+            android:textSize="14sp"/>
+
+        <CheckBox
+            android:id="@+id/cbIgnoreMinDuration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/ignore_min_duration"
+            android:textSize="14sp"/>
+
+        <CheckBox
+            android:id="@+id/cbUseSparks"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/use_sparks"
+            android:textSize="14sp"/>
+
+        <CheckBox
+            android:id="@+id/cbUseAlternateKeys"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/use_alternate_keys"
+            android:textSize="14sp"/>
+
+        <CheckBox
+            android:id="@+id/cbRollcheck"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/rollcheck"
+            android:textSize="14sp"/>
+
+        <CheckBox
+            android:id="@+id/cbRollcheckPriority"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/rollcheck_priority"
+            android:textSize="14sp"/>
+
+        <CheckBox
+            android:id="@+id/cbUsePerColorDelta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/use_per_color_delta"
+            android:textSize="14sp"/>
+
+        <CheckBox
+            android:id="@+id/cbSyncNotesStart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/sync_notes_start"
+            android:textSize="14sp"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="24dp">
+
+            <Button
+                android:id="@+id/btnReset"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/reset"
+                android:layout_marginEnd="8dp"
+                android:backgroundTint="@color/warning"/>
+
+            <Button
+                android:id="@+id/btnCancel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/cancel"
+                android:layout_marginEnd="8dp"
+                android:backgroundTint="@color/secondary"/>
+
+            <Button
+                android:id="@+id/btnSave"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/save"
+                android:backgroundTint="@color/success"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

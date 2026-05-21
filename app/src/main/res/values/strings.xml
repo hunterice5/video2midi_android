@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Video2MIDI</string>
+    <string name="app_icon">App Icon</string>
+    <string name="app_description">Convert piano roll video to MIDI file</string>
+    
+    <!-- Main Activity -->
+    <string name="no_video_selected">No video selected</string>
+    <string name="select_video">Select Video</string>
+    <string name="preview">Preview</string>
+    <string name="settings">Settings</string>
+    <string name="color_map">Color Map</string>
+    <string name="start_conversion">Start Conversion</string>
+    
+    <!-- Settings Activity -->
+    <string name="settings_title">Settings</string>
+    <string name="midi_settings">MIDI Settings</string>
+    <string name="key_positions">Key Positions</string>
+    <string name="options">Options</string>
+    
+    <string name="octave">Octave: 3</string>
+    <string name="tempo">Tempo: 120</string>
+    <string name="sensitivity">Sensitivity: 90</string>
+    <string name="min_duration">Min Duration: 0.10 sec</string>
+    <string name="white_key_width">White Key Width: 25</string>
+    <string name="black_key_position">Black Key Position: 0.40</string>
+    <string name="keys_count">Keys Count: 89</string>
+    
+    <string name="notes_overlap">Notes Overlap</string>
+    <string name="ignore_min_duration">Ignore Notes with Min Duration</string>
+    <string name="use_sparks">Use Sparks Detection</string>
+    <string name="use_alternate_keys">Use Alternate Keys</string>
+    <string name="rollcheck">Rollcheck (Priority on neighboring keys)</string>
+    <string name="rollcheck_priority">Rollcheck White Keys Priority</string>
+    <string name="use_per_color_delta">Use Per-Color Sensitivity</string>
+    <string name="sync_notes_start">Sync Notes Start Position</string>
+    
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="reset">Reset to Defaults</string>
+    
+    <!-- Preview Activity -->
+    <string name="frame_info">Frame: 0 / 0</string>
+    <string name="video_preview">Video Preview</string>
+    <string name="prev_frame">Previous</string>
+    <string name="next_frame">Next</string>
+    <string name="close">Close</string>
+    
+    <!-- Color Map Activity -->
+    <string name="color_map_title">Color Map</string>
+    <string name="color_map_description">Configure colors for key detection and MIDI channels</string>
+    <string name="add_color">Add Color</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Disable</string>
+    
+    <!-- Common -->
+    <string name="ok">OK</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+</resources>

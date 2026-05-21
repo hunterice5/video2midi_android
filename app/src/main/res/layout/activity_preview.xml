@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Основной контент -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/black">
+
+        <!-- Компактная верхняя панель -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:orientation="horizontal"
+            android:padding="4dp"
+            android:background="@color/secondary_dark">
+
+            <TextView
+                android:id="@+id/tvFrameNumber"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@string/frame_info"
+                android:textColor="@color/white"
+                android:textSize="11sp"
+                android:gravity="center_vertical|start"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"/>
+
+            <Button
+                android:id="@+id/btnMenu"
+                android:layout_width="32dp"
+                android:layout_height="match_parent"
+                android:text="☰"
+                android:textSize="16sp"
+                android:padding="0dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:backgroundTint="@color/primary"/>
+
+            <Button
+                android:id="@+id/btnToggleKeyboard"
+                android:layout_width="28dp"
+                android:layout_height="match_parent"
+                android:text="K"
+                android:textSize="10sp"
+                android:padding="0dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:layout_marginStart="2dp"
+                android:backgroundTint="@color/primary"/>
+
+            <Button
+                android:id="@+id/btnToggleSparks"
+                android:layout_width="28dp"
+                android:layout_height="match_parent"
+                android:text="S"
+                android:textSize="10sp"
+                android:padding="0dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:layout_marginStart="2dp"
+                android:backgroundTint="@color/accent"/>
+        </LinearLayout>
+
+        <!-- Область просмотра видео -->
+        <com.video2midi.ui.CustomPreviewView
+            android:id="@+id/previewView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@color/black"/>
+
+        <!-- Seekbar для кадров -->
+        <SeekBar
+            android:id="@+id/seekBarFrame"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"/>
+
+        <!-- Компактная нижняя панель -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:orientation="horizontal"
+            android:padding="2dp"
+            android:background="@color/secondary_dark">
+
+            <Button
+                android:id="@+id/btnPrevFrame"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="◄"
+                android:textSize="14sp"
+                android:padding="0dp"
+                android:layout_marginEnd="2dp"
+                android:backgroundTint="@color/primary"/>
+
+            <Button
+                android:id="@+id/btnNextFrame"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="►"
+                android:textSize="14sp"
+                android:padding="0dp"
+                android:layout_marginEnd="2dp"
+                android:backgroundTint="@color/primary"/>
+
+            <Button
+                android:id="@+id/btnColorPicker"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.5"
+                android:text="Pick"
+                android:textSize="10sp"
+                android:padding="0dp"
+                android:layout_marginEnd="2dp"
+                android:backgroundTint="@color/success"/>
+
+            <Button
+                android:id="@+id/btnColorMap"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.5"
+                android:text="Colors"
+                android:textSize="10sp"
+                android:padding="0dp"
+                android:layout_marginEnd="2dp"
+                android:backgroundTint="@color/info"/>
+
+            <Button
+                android:id="@+id/btnConvert"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:text="Convert"
+                android:textSize="10sp"
+                android:padding="0dp"
+                android:layout_marginEnd="2dp"
+                android:backgroundTint="@color/success"/>
+
+            <Button
+                android:id="@+id/btnClose"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="✕"
+                android:textSize="14sp"
+                android:padding="0dp"
+                android:backgroundTint="@color/danger"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Боковая панель (Navigation Drawer) -->
+    <ScrollView
+        android:id="@+id/navigationView"
+        android:layout_width="280dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:background="@color/background_dark"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Keyboard Controls"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"/>
+
+            <!-- Режим перемещения клавиатуры -->
+            <Button
+                android:id="@+id/btnMoveKeyboard"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:text="Move Keyboard"
+                android:textSize="12sp"
+                android:layout_marginBottom="8dp"
+                android:backgroundTint="@color/accent"/>
+
+            <!-- Ширина клавиш -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Key Width"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:layout_marginTop="4dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+
+                <SeekBar
+                    android:id="@+id/seekKeyWidth"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:max="300"
+                    android:progress="15"/>
+
+                <TextView
+                    android:id="@+id/tvKeyWidth"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:text="25"
+                    android:textColor="@color/white"
+                    android:gravity="center"
+                    android:textSize="12sp"
+                    android:layout_marginStart="8dp"/>
+
+                <Button
+                    android:id="@+id/btnDecKeyWidth"
+                    android:layout_width="28dp"
+                    android:layout_height="wrap_content"
+                    android:text="-"
+                    android:textSize="10sp"
+                    android:padding="0dp"
+                    android:minWidth="0dp"
+                    android:minHeight="28dp"
+                    android:backgroundTint="@color/primary"/>
+
+                <Button
+                    android:id="@+id/btnIncKeyWidth"
+                    android:layout_width="32dp"
+                    android:layout_height="wrap_content"
+                    android:text="+"
+                    android:textSize="10sp"
+                    android:padding="0dp"
+                    android:minWidth="0dp"
+                    android:minHeight="28dp"
+                    android:backgroundTint="@color/primary"/>
+
+
+            </LinearLayout>
+
+            <!-- Выравнивание клавиш -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Alignment"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+
+                <Button
+                    android:id="@+id/btnAlignVertical"
+                    android:layout_width="0dp"
+                    android:layout_height="36dp"
+                    android:layout_weight="1"
+                    android:text="V-Align"
+                    android:textSize="11sp"
+                    android:backgroundTint="@color/accent"
+                    android:layout_marginEnd="4dp"/>
+
+                <Button
+                    android:id="@+id/btnAlignHorizontal"
+                    android:layout_width="0dp"
+                    android:layout_height="36dp"
+                    android:layout_weight="1"
+                    android:text="H-Align"
+                    android:textSize="11sp"
+                    android:backgroundTint="@color/accent"/>
+            </LinearLayout>
+
+            <!-- Сброс -->
+            <Button
+                android:id="@+id/btnResetKey"
+                android:layout_width="match_parent"
+                android:layout_height="36dp"
+                android:text="Reset Selected Key"
+                android:textSize="11sp"
+                android:layout_marginBottom="8dp"
+                android:backgroundTint="@color/warning"/>
+
+            <Button
+                android:id="@+id/btnResetAllKeys"
+                android:layout_width="match_parent"
+                android:layout_height="36dp"
+                android:text="Reset All Keys"
+                android:textSize="11sp"
+                android:layout_marginBottom="12dp"
+                android:backgroundTint="@color/danger"/>
+
+            <!-- Разделитель -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"/>
+
+            <!-- Настройки отображения -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Display Settings"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
+            <CheckBox
+                android:id="@+id/cbShowKeyPresses"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Show Key Presses"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:checked="true"/>
+            <CheckBox
+                android:id="@+id/cbShowKeyNumbers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Show Key Numbers"
+                android:textColor="@color/white"
+                android:textSize="12sp"/>
+
+            <CheckBox
+                android:id="@+id/cbShowOctaveMarker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Show Octave Marker"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:checked="true"/>
+
+            <!-- Разделитель -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"/>
+
+            <!-- Действия -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Actions"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
+
+            <Button
+                android:id="@+id/btnSaveSettings"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:text="Save Settings"
+                android:textSize="12sp"
+                android:layout_marginBottom="8dp"
+                android:backgroundTint="@color/info"/>
+
+            <Button
+                android:id="@+id/btnResetView"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:text="Reset Zoom/Position"
+                android:textSize="12sp"
+                android:layout_marginBottom="8dp"
+                android:backgroundTint="@color/secondary"/>
+
+            <!-- Информация -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Help"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="• Tap key to select\n• Drag key to move\n• Two fingers to move keyboard\n• Pinch to zoom\n• Double tap to reset zoom"
+                android:textColor="@color/secondary_text"
+                android:textSize="11sp"
+                android:lineSpacingExtra="2dp"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.drawerlayout.widget.DrawerLayout>
