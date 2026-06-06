@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Video2MIDI</string>
+    <string name="app_icon">ไอคอนแอป</string>
+    <string name="app_description">แปลงไฟล์วิดีโอเปียโนโรลเป็นไฟล์ MIDI</string>
+    
+    <!-- Main Activity -->
+    <string name="no_video_selected">ยังไม่ได้เลือกวิดีโอ</string>
+    <string name="select_video">เลือกวิดีโอ</string>
+    <string name="preview">พรีวิวตำแหน่งปุ่ม</string>
+    <string name="settings">ตั้งค่าการประมวลผล</string>
+    <string name="color_map">แถบสีคีย์บอร์ด</string>
+    <string name="start_conversion">เริ่มแปลงไฟล์</string>
+    
+    <!-- Settings Activity -->
+    <string name="settings_title">ตั้งค่า</string>
+    <string name="midi_settings">ตั้งค่าไฟล์ MIDI</string>
+    <string name="key_positions">การจัดตำแหน่งคีย์เปียโน</string>
+    <string name="options">ตัวเลือกเสริมการตรวจจับ</string>
+    
+    <string name="octave">อ็อกเทฟ (Octave): %d</string>
+    <string name="tempo">จังหวะความเร็ว (Tempo): %d BPM</string>
+    <string name="sensitivity">ความไวในการจับสี (Sensitivity): %d</string>
+    <string name="min_duration">ความยาวโน้ตขั้นต่ำ: %.2f วินาที</string>
+    <string name="white_key_width">ความกว้างคีย์ขาว: %d</string>
+    <string name="black_key_position">ตำแหน่งคีย์ดำสัมพัทธ์: %.2f</string>
+    <string name="keys_count">จำนวนคีย์เปียโน: %d คีย์</string>
+    
+    <string name="notes_overlap">ตรวจจับโน้ตเหลื่อมซ้อน (Notes Overlap)</string>
+    <string name="ignore_min_duration">ข้ามโน้ตสั้นกว่าเวลาขั้นต่ำ</string>
+    <string name="use_sparks">ใช้แถบแสงช่วยจับปุ่มกด (Sparks)</string>
+    <string name="use_alternate_keys">ใช้คีย์ทางเลือก (Alternate Keys)</string>
+    <string name="rollcheck">ระบบกันจับโน้ตข้างเคียงผิดพลาด (Rollcheck)</string>
+    <string name="rollcheck_priority">ให้ความสำคัญคีย์ขาวก่อน (Rollcheck Priority)</string>
+    <string name="use_per_color_delta">แยกความไวตามเฉดสี (Per-Color)</string>
+    <string name="sync_notes_start">ปรับเวลาโน้ตเริ่มพร้อมกัน (Sync Start)</string>
+    
+    <string name="save">บันทึก</string>
+    <string name="cancel">ยกเลิก</string>
+    <string name="reset">คืนค่าเริ่มต้น</string>
+    
+    <!-- Preview Activity -->
+    <string name="frame_info">เฟรม: %d / %d</string>
+    <string name="video_preview">พรีวิววิดีโอ</string>
+    <string name="prev_frame">เฟรมก่อนหน้า</string>
+    <string name="next_frame">เฟรมถัดไป</string>
+    <string name="close">ปิดหน้าต่าง</string>
+    
+    <!-- Color Map Activity -->
+    <string name="color_map_title">แถบสีตรวจจับ</string>
+    <string name="color_map_description">กำหนดช่วงสีในการประมวลผลของปุ่มกดและช่องเสียง MIDI</string>
+    <string name="add_color">เพิ่มกลุ่มสี</string>
+    <string name="edit">แก้ไข</string>
+    <string name="delete">ปิดใช้งาน</string>
+    
+    <!-- Common -->
+    <string name="ok">ตกลง</string>
+    <string name="yes">ใช่</string>
+    <string name="no">ไม่ใช่</string>
+
+    <!-- Settings Explanations (Thai) -->
+    <string name="desc_octave">เลื่อนระดับเสียงคีย์บอร์ดขึ้นลงทีละอ็อกเทฟในไฟล์ MIDI (ค่าเริ่มต้นคือ 3)</string>
+    <string name="desc_tempo">กำหนดจังหวะความเร็วในการเล่น (BPM) ของเพลงในไฟล์ MIDI</string>
+    <string name="desc_sensitivity">ความไวการวัดระดับสีที่เปลี่ยนไป ค่าสูงจะจับง่ายแต่จะเจอสัญญาณกวนง่าย แนะนำที่ 80-95</string>
+    <string name="desc_min_duration">โน้ตสั้นกว่าเวลานี้จะถูกละเว้นหรือยืดเวลาเพื่อแก้สีกะพริบ แนะนำที่ 0.02 วินาที สำหรับวิดีโอ 60 เฟรม</string>
+    <string name="desc_white_key_width">ปรับพิกเซลความกว้างปุ่มเปียโนคีย์ขาวให้ขยายเข้าสัดส่วนคีย์บอร์ดในคลิปวิดีโอ</string>
+    <string name="desc_black_key_position">ปรับแต่งระยะการเบนตัวของลิ่มคีย์ดำตามแนวขวางเทียบกับตำแหน่งของคีย์ขาว</string>
+    <string name="desc_keys_count">เลือกจำนวนคีย์บอร์ดเปียโนที่ต้องการให้โปรแกรมประมวลผลสแกนปุ่ม (ปกติคือ 88 คีย์)</string>
+    <string name="desc_notes_overlap">อนุญาตให้โน้ตระดับเสียงเดียวกันบันทึกซ้อนกันได้ (แนะนำให้ปิดไว้เพื่อให้ได้เพลงที่สะอาดไม่สับสน)</string>
+    <string name="desc_ignore_min_duration">เลือกเปิดเพื่อกรองและตัดเสียงกวนหรือการสั่นไหวของสีที่สั้นกว่าเวลาความยาวขั้นต่ำออกไปทันที</string>
+    <string name="desc_use_sparks">เปิดใช้งานหากวิดีโอเปียโนมีแสงไฟประกายพุ่งขึ้นด้านบนปุ่ม เพื่อช่วยตรวจจับและลดโน้ตตกหล่น</string>
+    <string name="desc_use_alternate_keys">โหมดทดลอง: ใช้ตรรกะตรวจจับแบบพิเศษสำหรับคลิปเปียโนที่ใช้สีปุ่มรูปแบบนอกระบบ</string>
+    <string name="desc_rollcheck">ตรวจสอบลิ่มข้างเคียงเพื่อตัดโน้ตซ้อนทับผิดพลาดอันเกิดจากแสงของคีย์อื่นพุ่งล้นเข้ามาหากัน</string>
+    <string name="desc_rollcheck_priority">ให้ความสำคัญต่อสถานะของคีย์ขาวก่อนเมื่อตรวจสอบการเหลื่อมคีย์</string>
+    <string name="desc_use_per_color_delta">ใช้งานค่าความแตกต่างแบบแยกตามเฉดสีที่กำหนดในตารางสี แทนการใช้ค่าความไรรวมค่าเดียว</string>
+    <string name="desc_sync_notes_start">ปรับเวลาเริ่มต้นของกลุ่มโน้ตที่เริ่มเล่นใกล้เคียงกันให้กดเล่นตรงจังหวะพร้อมกัน (เช่น การกดคอร์ด)</string>
+    <string name="language_select">ภาษา / Language</string>
+    <string name="desc_language">เลือกภาษาอินเตอร์เฟสของแอปพลิเคชัน (Select application interface language)</string>
+</resources>

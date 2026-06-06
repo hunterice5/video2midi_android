@@ -11,8 +11,8 @@ android {
         applicationId = "com.video2midi"
         minSdk = project.findProperty("GLOBAL_MIN_SDK_VERSION")?.toString()?.toInt() ?: 29
         targetSdk = project.findProperty("GLOBAL_TARGET_SDK_VERSION")?.toString()?.toInt() ?: 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

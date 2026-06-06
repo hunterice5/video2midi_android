@@ -20,6 +20,7 @@ public class Preferences {
     private int sensitivity = 90;
     private boolean notesOverlap = false;
     private boolean ignoreMinimalDuration = false;
+    private String language = "en";
     
     // Визуальные настройки
     private int whiteKeyWidth = 25;
@@ -119,6 +120,7 @@ public class Preferences {
         editor.putInt("sensitivity", sensitivity);
         editor.putBoolean("notesOverlap", notesOverlap);
         editor.putBoolean("ignoreMinimalDuration", ignoreMinimalDuration);
+        editor.putString("language", language);
         
         editor.putInt("whiteKeyWidth", whiteKeyWidth);
         editor.putInt("xOffsetWhiteKeys", xOffsetWhiteKeys);
@@ -159,6 +161,7 @@ public class Preferences {
         sensitivity = prefs.getInt("sensitivity", 90);
         notesOverlap = prefs.getBoolean("notesOverlap", false);
         ignoreMinimalDuration = prefs.getBoolean("ignoreMinimalDuration", false);
+        language = prefs.getString("language", "en");
         
         whiteKeyWidth = prefs.getInt("whiteKeyWidth", 25);
         xOffsetWhiteKeys = prefs.getInt("xOffsetWhiteKeys", 60);
@@ -226,6 +229,9 @@ public class Preferences {
     public void setIgnoreMinimalDuration(boolean ignore) { 
         this.ignoreMinimalDuration = ignore; 
     }
+    
+    public String getLanguage() { return language; }
+    public void setLanguage(String language) { this.language = language; }
     
     public int getWhiteKeyWidth() { return whiteKeyWidth; }
     public void setWhiteKeyWidth(int width) { this.whiteKeyWidth = width; }

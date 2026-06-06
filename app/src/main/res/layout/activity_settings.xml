@@ -19,6 +19,34 @@
             android:layout_marginBottom="16dp"
             android:textColor="@color/primary_text"/>
 
+        <!-- Language Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/language_select"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="4dp"
+            android:textColor="@color/primary"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/desc_language"
+            android:textSize="11sp"
+            android:textColor="@color/secondary_text"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="8dp"/>
+
+        <Spinner
+            android:id="@+id/spinnerLanguage"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginBottom="16dp"
+            android:background="@android:drawable/btn_dropdown"
+            android:spinnerMode="dropdown"/>
+
         <!-- MIDI Settings Section -->
         <TextView
             android:layout_width="match_parent"
@@ -26,7 +54,7 @@
             android:text="@string/midi_settings"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:layout_marginBottom="8dp"
             android:textColor="@color/primary"/>
 
@@ -43,7 +71,16 @@
             android:id="@+id/seekOctave"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="4dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/desc_octave"
+            android:textSize="11sp"
+            android:textColor="@color/secondary_text"
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="8dp"/>
 
         <!-- Tempo -->
         <TextView
@@ -58,7 +95,16 @@
             android:id="@+id/seekTempo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="4dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/desc_tempo"
+            android:textSize="11sp"
+            android:textColor="@color/secondary_text"
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="8dp"/>
 
         <!-- Sensitivity -->
         <TextView
@@ -73,7 +119,16 @@
             android:id="@+id/seekSensitivity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="4dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/desc_sensitivity"
+            android:textSize="11sp"
+            android:textColor="@color/secondary_text"
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="8dp"/>
 
         <!-- Min Duration -->
         <TextView
@@ -88,7 +143,16 @@
             android:id="@+id/seekMinDuration"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="4dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/desc_min_duration"
+            android:textSize="11sp"
+            android:textColor="@color/secondary_text"
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="8dp"/>
 
         <!-- Key Positions Section -->
         <TextView
@@ -114,7 +178,16 @@
             android:id="@+id/seekWhiteKeyWidth"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="4dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/desc_white_key_width"
+            android:textSize="11sp"
+            android:textColor="@color/secondary_text"
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="8dp"/>
 
         <!-- Black Key Position -->
         <TextView
@@ -129,7 +202,16 @@
             android:id="@+id/seekBlackKeyPos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="4dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/desc_black_key_position"
+            android:textSize="11sp"
+            android:textColor="@color/secondary_text"
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="8dp"/>
 
         <!-- Keys Count -->
         <TextView
@@ -144,7 +226,16 @@
             android:id="@+id/seekKeysCount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="4dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/desc_keys_count"
+            android:textSize="11sp"
+            android:textColor="@color/secondary_text"
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="8dp"/>
 
         <!-- Options Section -->
         <TextView
@@ -164,12 +255,30 @@
             android:text="@string/notes_overlap"
             android:textSize="14sp"/>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/desc_notes_overlap"
+            android:textSize="11sp"
+            android:textColor="@color/secondary_text"
+            android:layout_marginBottom="12dp"
+            android:layout_marginStart="24dp"/>
+
         <CheckBox
             android:id="@+id/cbIgnoreMinDuration"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/ignore_min_duration"
             android:textSize="14sp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/desc_ignore_min_duration"
+            android:textSize="11sp"
+            android:textColor="@color/secondary_text"
+            android:layout_marginBottom="12dp"
+            android:layout_marginStart="24dp"/>
 
         <CheckBox
             android:id="@+id/cbUseSparks"
@@ -178,12 +287,30 @@
             android:text="@string/use_sparks"
             android:textSize="14sp"/>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/desc_use_sparks"
+            android:textSize="11sp"
+            android:textColor="@color/secondary_text"
+            android:layout_marginBottom="12dp"
+            android:layout_marginStart="24dp"/>
+
         <CheckBox
             android:id="@+id/cbUseAlternateKeys"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/use_alternate_keys"
             android:textSize="14sp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/desc_use_alternate_keys"
+            android:textSize="11sp"
+            android:textColor="@color/secondary_text"
+            android:layout_marginBottom="12dp"
+            android:layout_marginStart="24dp"/>
 
         <CheckBox
             android:id="@+id/cbRollcheck"
@@ -192,12 +319,30 @@
             android:text="@string/rollcheck"
             android:textSize="14sp"/>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/desc_rollcheck"
+            android:textSize="11sp"
+            android:textColor="@color/secondary_text"
+            android:layout_marginBottom="12dp"
+            android:layout_marginStart="24dp"/>
+
         <CheckBox
             android:id="@+id/cbRollcheckPriority"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/rollcheck_priority"
             android:textSize="14sp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/desc_rollcheck_priority"
+            android:textSize="11sp"
+            android:textColor="@color/secondary_text"
+            android:layout_marginBottom="12dp"
+            android:layout_marginStart="24dp"/>
 
         <CheckBox
             android:id="@+id/cbUsePerColorDelta"
@@ -206,13 +351,30 @@
             android:text="@string/use_per_color_delta"
             android:textSize="14sp"/>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/desc_use_per_color_delta"
+            android:textSize="11sp"
+            android:textColor="@color/secondary_text"
+            android:layout_marginBottom="12dp"
+            android:layout_marginStart="24dp"/>
+
         <CheckBox
             android:id="@+id/cbSyncNotesStart"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/sync_notes_start"
-            android:textSize="14sp"
-            android:layout_marginBottom="16dp"/>
+            android:textSize="14sp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/desc_sync_notes_start"
+            android:textSize="11sp"
+            android:textColor="@color/secondary_text"
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="24dp"/>
 
         <!-- Buttons -->
         <LinearLayout

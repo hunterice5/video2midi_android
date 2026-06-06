@@ -36,6 +36,13 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static final int PERMISSION_REQUEST_CODE = 100;
     
+    @Override
+    protected void attachBaseContext(android.content.Context newBase) {
+        com.video2midi.model.Preferences preferences = new com.video2midi.model.Preferences();
+        preferences.load(newBase);
+        super.attachBaseContext(com.video2midi.utils.LocaleHelper.wrapContext(newBase, preferences.getLanguage()));
+    }
+    
     private Button btnSelectVideo;
     private Button btnPreview;
     private Button btnSettings;
@@ -260,12 +267,18 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         
         if (resultCode == RESULT_OK) {
+            String oldLang = preferences.getLanguage();
             // Перезагружаем настройки после возврата из Settings или ColorMap
             preferences.load(this);
+            String newLang = preferences.getLanguage();
             
             if (requestCode == 1) {
                 // Обновляем позиции клавиш после изменения настроек
                 KeyPositionCalculator.updateKeyPositions(preferences);
+            }
+            
+            if (!newLang.equals(oldLang)) {
+                recreate();
             }
         }
     }

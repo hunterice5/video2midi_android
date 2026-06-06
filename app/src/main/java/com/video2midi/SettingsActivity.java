@@ -16,6 +16,14 @@ public class SettingsActivity extends AppCompatActivity {
     private static final String TAG = "SettingsActivity";
     
     private Preferences preferences;
+    private android.widget.Spinner spinnerLanguage;
+    
+    @Override
+    protected void attachBaseContext(android.content.Context newBase) {
+        com.video2midi.model.Preferences preferences = new com.video2midi.model.Preferences();
+        preferences.load(newBase);
+        super.attachBaseContext(com.video2midi.utils.LocaleHelper.wrapContext(newBase, preferences.getLanguage()));
+    }
     
     // UI элементы
     private SeekBar seekOctave;
@@ -108,6 +116,7 @@ public class SettingsActivity extends AppCompatActivity {
         btnSave = findViewById(R.id.btnSave);
         btnReset = findViewById(R.id.btnReset);
         btnCancel = findViewById(R.id.btnCancel);
+        spinnerLanguage = findViewById(R.id.spinnerLanguage);
     }
     
     private void loadSettings() {
@@ -157,6 +166,18 @@ public class SettingsActivity extends AppCompatActivity {
         cbRollcheckPriority.setChecked(preferences.isRollcheckPriority());
         cbUsePerColorDelta.setChecked(preferences.isUsePerColorDelta());
         cbSyncNotesStart.setChecked(preferences.isSyncNotesStartPos());
+
+        String[] languages = {"English", "ไทย"};
+        android.widget.ArrayAdapter<String> adapter = new android.widget.ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, languages);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerLanguage.setAdapter(adapter);
+
+        if ("th".equals(preferences.getLanguage())) {
+            spinnerLanguage.setSelection(1);
+        } else {
+            spinnerLanguage.setSelection(0);
+        }
     }
     
     private void setupListeners() {
@@ -301,6 +322,11 @@ public class SettingsActivity extends AppCompatActivity {
         preferences.setRollcheckPriority(cbRollcheckPriority.isChecked());
         preferences.setUsePerColorDelta(cbUsePerColorDelta.isChecked());
         preferences.setSyncNotesStartPos(cbSyncNotesStart.isChecked());
+
+        int langSelection = spinnerLanguage.getSelectedItemPosition();
+        String oldLang = preferences.getLanguage();
+        String newLang = langSelection == 1 ? "th" : "en";
+        preferences.setLanguage(newLang);
         
         // Обновляем позиции клавиш
         KeyPositionCalculator.updateKeyPositions(preferences);
@@ -309,7 +335,14 @@ public class SettingsActivity extends AppCompatActivity {
         preferences.save(this);
         
         setResult(RESULT_OK);
-        finish();
+        
+        if (!newLang.equals(oldLang)) {
+            android.content.Intent intent = getIntent();
+            finish();
+            startActivity(intent);
+        } else {
+            finish();
+        }
     }
     
     private void resetSettings() {

@@ -57,4 +57,23 @@
     <string name="ok">OK</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+
+    <!-- Settings Explanations (English) -->
+    <string name="desc_octave">Adjusts the musical octave pitch offset of the output MIDI file (default is 3).</string>
+    <string name="desc_tempo">Sets the standard playback speed (Beats Per Minute) for the generated MIDI.</string>
+    <string name="desc_sensitivity">How sensitive the detector is to color changes. Higher value = easier detection but more noise. Recommended: 80-95.</string>
+    <string name="desc_min_duration">Note events shorter than this will be ignored or forced to this length to avoid key flicker. Recommended: 0.02s for 60fps.</string>
+    <string name="desc_white_key_width">Adjust the pixel width of virtual piano keys to fit your video’s keyboard size.</string>
+    <string name="desc_black_key_position">Adjust the relative horizontal offset alignment for virtual black keys.</string>
+    <string name="desc_keys_count">Specify the total number of piano keys visible in the video (usually 88 keys).</string>
+    <string name="desc_notes_overlap">Allows simultaneous overlapping notes of the same pitch. Keep disabled for cleaner MIDI.</string>
+    <string name="desc_ignore_min_duration">Enable to completely skip/ignore short noise clicks that are shorter than the Min Duration setting.</string>
+    <string name="desc_use_sparks">Enable if your video has glowing sparks rising above the keyboard to help improve note hit precision.</string>
+    <string name="desc_use_alternate_keys">Experimental: Use alternative key mapping algorithms for non-standard Synthesia themes.</string>
+    <string name="desc_rollcheck">Analyzes neighboring keys to filter out false-positive duplicate triggers when lights bleed across keys.</string>
+    <string name="desc_rollcheck_priority">Prioritize white key state changes when processing rollchecks.</string>
+    <string name="desc_use_per_color_delta">Use individual color sensitivity variables from the Color Map list instead of a global value.</string>
+    <string name="desc_sync_notes_start">Auto-align starting times of notes played very close to each other (helps align chord keystrokes).</string>
+    <string name="language_select">Language / ภาษา</string>
+    <string name="desc_language">Select application interface language (เลือกภาษาแสดงผลของแอป)</string>
 </resources>

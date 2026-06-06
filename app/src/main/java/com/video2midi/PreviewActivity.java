@@ -45,6 +45,13 @@ import android.provider.MediaStore;
 public class PreviewActivity extends AppCompatActivity {
     private static final String TAG = "PreviewActivity";
     private static final int REQUEST_COLOR_MAP = 100;
+
+    @Override
+    protected void attachBaseContext(android.content.Context newBase) {
+        com.video2midi.model.Preferences preferences = new com.video2midi.model.Preferences();
+        preferences.load(newBase);
+        super.attachBaseContext(com.video2midi.utils.LocaleHelper.wrapContext(newBase, preferences.getLanguage()));
+    }
     
     // Класс для результата загрузки (вынесен из вложенного класса)
     private static class LoadResult {
