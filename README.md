@@ -1,5 +1,9 @@
 # Video2Midi Android (Optimized Edition)
 
+<p align="center">
+  <img src="docs/logo.png" width="200" height="200" alt="Video2Midi Logo">
+</p>
+
 Android application to convert YouTube Synthesia-style piano videos to MIDI files.
 
 * Original PC project: [https://github.com/svsdval/video2midi](https://github.com/svsdval/video2midi)
