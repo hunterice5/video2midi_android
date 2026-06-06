@@ -42,3 +42,7 @@ This version resolves the critical performance bottleneck and MIDI output stutte
 ### 4. 🏎️ Pixel Retrieval JNI Optimization (ลดภาระ JNI ในการประมวลผลพิกเซล)
 * **English:** Replaced JNI-heavy individual `Bitmap.getPixel` queries in the keyboard scanning loop (88+ times per frame) with a single pre-allocated `getPixels()` bulk buffer memory copy per frame.
 * **ไทย:** ปรับปรุงความเร็วในการอ่านค่าสีของคีย์บอร์ด โดยเปลี่ยนจากการเรียก JNI `Bitmap.getPixel` ทีละปุ่ม (88+ ครั้งต่อเฟรม) มาเป็นดึงค่าสีทั้งหมดลงหน่วยความจำบัฟเฟอร์ในรอบเดียว ช่วยลดภาระการประมวลผลต่อเฟรมลงอย่างมาก
+
+### 5. 📺 Real-Time Playback Preview (ระบบเล่นพรีวิววิดีโอแบบเรียลไทม์เพื่อทดสอบโน้ต)
+* **English:** Added a Play/Pause (`▶` / `⏸`) button in the video preview screen. It utilizes the hardware-accelerated `SequentialDecoder` to decode and play frames continuously at the video's actual frame rate. This allows users to check note detection and key highlights in real-time before initiating the full MIDI conversion.
+* **ไทย:** เพิ่มปุ่ม เล่น/หยุดชั่วคราว (`▶` / `⏸`) ในหน้าพรีวิววิดีโอ ซึ่งจะใช้ตัวถอดรหัสความเร็วสูงประมวลผลวิดีโอสดในระดับฮาร์ดแวร์เพื่อเล่นวิดีโอไปเรื่อยๆ ทำให้สามารถตรวจเช็คความแม่นยำของลิ่มเปียโนและสีโน้ตที่กระเด้งได้ทันทีแบบเรียลไทม์โดยไม่ต้องเสียเวลารอการแปลงไฟล์เสร็จ
