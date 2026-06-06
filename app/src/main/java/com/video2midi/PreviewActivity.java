@@ -66,7 +66,11 @@ public class PreviewActivity extends AppCompatActivity {
     private TextView tvFrameNumber;
     private TextView tvKeyWidth;
     private Button btnPrevFrame;
+    private Button btnPlayPause;
     private Button btnNextFrame;
+    private boolean isPlaying = false;
+    private android.os.Handler playbackHandler = new android.os.Handler(android.os.Looper.getMainLooper());
+    private Runnable playbackRunnable;
     private Button btnClose;
     private Button btnMenu;
     private Button btnToggleKeyboard;
@@ -157,6 +161,7 @@ public class PreviewActivity extends AppCompatActivity {
         tvFrameNumber = findViewById(R.id.tvFrameNumber);
         tvKeyWidth = findViewById(R.id.tvKeyWidth);
         btnPrevFrame = findViewById(R.id.btnPrevFrame);
+        btnPlayPause = findViewById(R.id.btnPlayPause);
         btnNextFrame = findViewById(R.id.btnNextFrame);
         btnClose = findViewById(R.id.btnClose);
         btnMenu = findViewById(R.id.btnMenu);
@@ -284,6 +289,89 @@ public class PreviewActivity extends AppCompatActivity {
                 showFrame(newFrame);
             } else {
                 Log.d(TAG, "Already at last frame");
+            }
+        });
+
+        btnPlayPause.setOnClickListener(v -> {
+            if (isPlaying) {
+                isPlaying = false;
+                btnPlayPause.setText("▶");
+                videoProcessor.stopSequentialDecoding();
+                btnPrevFrame.setEnabled(true);
+                btnNextFrame.setEnabled(true);
+                seekBarFrame.setEnabled(true);
+                btnConvert.setEnabled(true);
+                btnColorPicker.setEnabled(true);
+                btnColorMap.setEnabled(true);
+                btnMenu.setEnabled(true);
+                btnClose.setEnabled(true);
+                playbackHandler.removeCallbacks(playbackRunnable);
+            } else {
+                isPlaying = true;
+                btnPlayPause.setText("⏸");
+                btnPrevFrame.setEnabled(false);
+                btnNextFrame.setEnabled(false);
+                seekBarFrame.setEnabled(false);
+                btnConvert.setEnabled(false);
+                btnColorPicker.setEnabled(false);
+                btnColorMap.setEnabled(false);
+                btnMenu.setEnabled(false);
+                btnClose.setEnabled(false);
+
+                int startFrame = seekBarFrame.getProgress();
+                videoProcessor.startSequentialDecoding(startFrame, 1);
+
+                playbackRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!isPlaying) return;
+
+                        int currentFrame = seekBarFrame.getProgress();
+                        int nextFrame = currentFrame + 1;
+                        if (nextFrame >= videoProcessor.getFrameCount()) {
+                            runOnUiThread(() -> {
+                                if (isPlaying) {
+                                    btnPlayPause.performClick();
+                                }
+                            });
+                            return;
+                        }
+
+                        long frameStartTime = System.currentTimeMillis();
+                        new Thread(() -> {
+                            boolean success = videoProcessor.processFrame(nextFrame);
+                            if (success) {
+                                Bitmap frame = videoProcessor.getCurrentFrame();
+                                if (frame != null && !frame.isRecycled()) {
+                                    Bitmap frameCopy = frame.copy(Bitmap.Config.ARGB_8888, true);
+                                    runOnUiThread(() -> {
+                                        if (isPlaying) {
+                                            previewView.setDisplayBitmap(frameCopy);
+                                            seekBarFrame.setProgress(nextFrame);
+                                            tvFrameNumber.setText(String.format("Frame: %d / %d",
+                                                    nextFrame, videoProcessor.getFrameCount()));
+
+                                            long elapsed = System.currentTimeMillis() - frameStartTime;
+                                            double fps = videoProcessor.getFPS();
+                                            long delay = (long) (1000.0 / fps) - elapsed;
+                                            playbackHandler.postDelayed(playbackRunnable, Math.max(1, delay));
+                                        } else {
+                                            frameCopy.recycle();
+                                        }
+                                    });
+                                }
+                            } else {
+                                runOnUiThread(() -> {
+                                    if (isPlaying) {
+                                        btnPlayPause.performClick();
+                                        Toast.makeText(PreviewActivity.this, "Playback error", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        }).start();
+                    }
+                };
+                playbackHandler.post(playbackRunnable);
             }
         });
 
@@ -1399,7 +1487,22 @@ public class PreviewActivity extends AppCompatActivity {
     }
     
     @Override
+    protected void onPause() {
+        super.onPause();
+        if (isPlaying) {
+            btnPlayPause.performClick();
+        }
+    }
+    
+    @Override
     protected void onDestroy() {
+        if (isPlaying) {
+            isPlaying = false;
+            playbackHandler.removeCallbacks(playbackRunnable);
+            if (videoProcessor != null) {
+                videoProcessor.stopSequentialDecoding();
+            }
+        }
         super.onDestroy();
         
         if (currentTask != null && !currentTask.isCancelled()) {

@@ -16,7 +16,7 @@ public class Preferences {
     // MIDI настройки
     private int octave = 3;
     private int tempo = 120;
-    private float minimalDuration = 0.1f;
+    private float minimalDuration = 0.02f;
     private int sensitivity = 90;
     private boolean notesOverlap = false;
     private boolean ignoreMinimalDuration = false;
@@ -155,7 +155,7 @@ public class Preferences {
         // Загрузка простых типов
         octave = prefs.getInt("octave", 3);
         tempo = prefs.getInt("tempo", 120);
-        minimalDuration = prefs.getFloat("minimalDuration", 0.1f);
+        minimalDuration = prefs.getFloat("minimalDuration", 0.02f);
         sensitivity = prefs.getInt("sensitivity", 90);
         notesOverlap = prefs.getBoolean("notesOverlap", false);
         ignoreMinimalDuration = prefs.getBoolean("ignoreMinimalDuration", false);

@@ -49,6 +49,18 @@
             android:layout_marginBottom="24dp"
             android:textColor="@color/secondary_text"/>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="💡 Recommendation / คำแนะนำ:\n• For best results, use 1080p 60fps or 120fps videos.\n• 30fps videos may cause notes to merge (stick together) due to low frame rate.\n• You can download 60fps/120fps videos using YTDLnis: https://github.com/deniscerri/ytdlnis\n\n• เพื่อผลลัพธ์ที่ดีที่สุด ควรใช้วิดีโอ 1080p 60fps หรือ 120fps\n• วิดีโอ 30fps อาจทำให้โน้ตเล่นติดกัน (โน้ตควบ) เนื่องจากเฟรมเรตต่ำเกินไป\n• แนะนำให้ดาวน์โหลดวิดีโอ 60fps/120fps ผ่านแอป YTDLnis: https://github.com/deniscerri/ytdlnis"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:gravity="start"
+            android:layout_marginBottom="16dp"
+            android:padding="12dp"
+            android:background="#1A00E676"
+            android:textColor="#00E676"/>
+
         <Button
             android:id="@+id/btnSelectVideo"
             android:layout_width="match_parent"

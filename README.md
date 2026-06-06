@@ -7,6 +7,21 @@ Android application to convert YouTube Synthesia-style piano videos to MIDI file
 
 ---
 
+## 📱 Screenshots (ภาพหน้าจอ)
+
+| Main Screen (หน้าแรก) | Real-time Preview & Playback (พรีวิววิดีโอ) |
+| --- | --- |
+| ![Main Screen](docs/Screenshot_main.jpg) | ![Preview Screen](docs/Screenshot_preview.jpg) |
+
+---
+
+## 💡 Recommendation for Video Download (คำแนะนำการดาวน์โหลดวิดีโอ)
+
+* **English:** For the best conversion accuracy, it is highly recommended to use **1080p 60fps or 120fps** videos. 30fps videos often have low temporal resolution, causing consecutive notes to get merged (stuck together). You can download high-quality videos on Android using **[YTDLnis](https://github.com/deniscerri/ytdlnis)** (an excellent open-source video downloader).
+* **ไทย:** เพื่อความแม่นยำในการแปลงไฟล์เสียงสูงสุด แนะนำให้ดาวน์โหลดวิดีโอที่ความละเอียด **1080p 60fps หรือ 120fps** เนื่องจากวิดีโอแบบ 30fps มีเฟรมเรตต่ำเกินไปจนมักทำให้ตัวโน้ตเล่นติดกัน (โน้ตควบ) แนะนำให้ใช้แอปดาวน์โหลดวิดีโอโอเพนซอร์สคุณภาพสูงอย่าง **[YTDLnis](https://github.com/deniscerri/ytdlnis)** บน Android ครับ
+
+---
+
 ## 🚀 Key Optimizations & Fixes (รายการปรับปรุงและแก้ไข)
 
 This version resolves the critical performance bottleneck and MIDI output stuttering issues found in the original codebase:
