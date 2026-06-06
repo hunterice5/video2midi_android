@@ -30,6 +30,21 @@
         android:text="Position: (0, 0)"
         android:textSize="14sp"
         android:gravity="center"
+        android:layout_marginBottom="16dp"
         android:textColor="@color/secondary_text"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Select target slot to overwrite:"
+        android:textSize="14sp"
+        android:textColor="@color/secondary_text"
+        android:layout_marginBottom="4dp"/>
+
+    <Spinner
+        android:id="@+id/spinnerSlots"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"/>
 
 </LinearLayout>

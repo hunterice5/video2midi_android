@@ -37,6 +37,9 @@ import java.util.List;
 import android.os.Environment;
 import android.os.Build;
 import androidx.core.content.FileProvider;
+import android.content.ContentValues;
+import android.content.ContentResolver;
+import android.provider.MediaStore;
 
 
 public class PreviewActivity extends AppCompatActivity {
@@ -112,6 +115,23 @@ public class PreviewActivity extends AppCompatActivity {
         
         preferences = new Preferences();
         preferences.load(this);
+        
+        // Auto-initialize key positions if they are all at (0, 0) (uninitialized)
+        boolean needsInit = true;
+        java.util.List<com.video2midi.model.KeyPosition> kps = preferences.getKeysPositions();
+        if (kps != null && !kps.isEmpty()) {
+            for (com.video2midi.model.KeyPosition kp : kps) {
+                if (kp.getX() != 0 || kp.getY() != 0) {
+                    needsInit = false;
+                    break;
+                }
+            }
+        }
+        if (needsInit) {
+            KeyPositionCalculator.updateKeyPositions(preferences);
+            preferences.save(this);
+            Log.d(TAG, "Key positions auto-initialized with defaults");
+        }
         
         videoProcessor = new VideoProcessor(this, videoPath, preferences);
         
@@ -421,40 +441,54 @@ public class PreviewActivity extends AppCompatActivity {
         View colorPreview = dialogView.findViewById(R.id.colorPreview);
         TextView tvColorInfo = dialogView.findViewById(R.id.tvColorInfo);
         TextView tvPosition = dialogView.findViewById(R.id.tvPosition);
+        android.widget.Spinner spinnerSlots = dialogView.findViewById(R.id.spinnerSlots);
         
         colorPreview.setBackgroundColor(Color.rgb(color[0], color[1], color[2]));
         tvColorInfo.setText(String.format("RGB(%d, %d, %d)", color[0], color[1], color[2]));
         tvPosition.setText(String.format("Position: (%d, %d)", x, y));
-        
-        new AlertDialog.Builder(this)
-            .setTitle("Add to Color Map?")
-            .setView(dialogView)
-            .setPositiveButton("Add", (dialog, which) -> addColorToMap(color))
-            .setNegativeButton("Cancel", null)
-            .show();
-    }
-    
-    private void addColorToMap(int[] color) {
-        List<ColorMap> colors = preferences.getKeypColors();
-        
-        int emptyIndex = -1;
+
+        java.util.List<com.video2midi.model.ColorMap> colors = preferences.getKeypColors();
+        java.util.List<String> slotDescriptions = new java.util.ArrayList<>();
+        int defaultSelected = 0;
+        boolean foundEmpty = false;
+
         for (int i = 0; i < colors.size(); i++) {
-            if (colors.get(i).isEmpty()) {
-                emptyIndex = i;
-                break;
+            com.video2midi.model.ColorMap cm = colors.get(i);
+            if (cm.isEmpty()) {
+                slotDescriptions.add(String.format("Slot %d (Empty)", i + 1));
+                if (!foundEmpty) {
+                    defaultSelected = i;
+                    foundEmpty = true;
+                }
+            } else {
+                slotDescriptions.add(String.format("Slot %d (RGB: %d, %d, %d)", i + 1, cm.getR(), cm.getG(), cm.getB()));
             }
         }
+
+        android.widget.ArrayAdapter<String> adapter = new android.widget.ArrayAdapter<>(
+            this, android.R.layout.simple_spinner_item, slotDescriptions
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerSlots.setAdapter(adapter);
+        spinnerSlots.setSelection(defaultSelected);
         
-        if (emptyIndex >= 0) {
-            colors.get(emptyIndex).setR(color[0]);
-            colors.get(emptyIndex).setG(color[1]);
-            colors.get(emptyIndex).setB(color[2]);
-            preferences.setKeypColors(colors);
-            preferences.save(this);
-            Toast.makeText(this, "Color added to slot " + emptyIndex, Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "No empty slots", Toast.LENGTH_SHORT).show();
-        }
+        new AlertDialog.Builder(this)
+            .setTitle("Add to Color Map")
+            .setView(dialogView)
+            .setPositiveButton("Save", (dialog, which) -> {
+                int selectedIndex = spinnerSlots.getSelectedItemPosition();
+                if (selectedIndex >= 0 && selectedIndex < colors.size()) {
+                    com.video2midi.model.ColorMap selectedMap = colors.get(selectedIndex);
+                    selectedMap.setR(color[0]);
+                    selectedMap.setG(color[1]);
+                    selectedMap.setB(color[2]);
+                    preferences.setKeypColors(colors);
+                    preferences.save(this);
+                    Toast.makeText(this, "Saved to slot " + (selectedIndex + 1), Toast.LENGTH_SHORT).show();
+                }
+            })
+            .setNegativeButton("Cancel", null)
+            .show();
     }
     
     private void openColorMap() {
@@ -463,12 +497,25 @@ public class PreviewActivity extends AppCompatActivity {
         startActivityForResult(intent, REQUEST_COLOR_MAP);
     }
     
+    private int selectedFrameStep = 1; // Default to High Precision (process 100% of frames)
+
     private void startConversion() {
+        String[] options = {
+            "High Precision (Slow, process 100% of frames)",
+            "Normal Speed (2x Faster, process every 2nd frame)",
+            "Fast (3x Faster, process every 3rd frame)",
+            "Super Fast (4x Faster, process every 4th frame)"
+        };
+        int defaultChoice = 0; // "High Precision"
+        selectedFrameStep = 1; // Reset default choice variable
+
         new AlertDialog.Builder(this)
-            .setTitle("Start Conversion")
-            .setMessage("Convert video to MIDI?\nThis may take several minutes.")
-            .setPositiveButton("Start", (dialog, which) -> {
-                new ConversionTask().execute();
+            .setTitle("Choose Conversion Speed")
+            .setSingleChoiceItems(options, defaultChoice, (dialog, which) -> {
+                selectedFrameStep = which + 1;
+            })
+            .setPositiveButton("Convert", (dialog, which) -> {
+                new ConversionTask(selectedFrameStep).execute();
             })
             .setNegativeButton("Cancel", null)
             .show();
@@ -722,11 +769,20 @@ public class PreviewActivity extends AppCompatActivity {
         private String currentPhase = "Processing...";
         private int currentNoteCount = 0;
         private boolean wasCancelled = false;
+        private int frameStep = 1;
 
         // ДОБАВЛЕНО: Для отслеживания времени
         private long startTimeMillis;
         private int totalFrames;
         private int currentFrame;
+
+        public ConversionTask() {
+            this.frameStep = 1;
+        }
+
+        public ConversionTask(int frameStep) {
+            this.frameStep = frameStep;
+        }
 
         @Override
         protected void onPreExecute() {
@@ -779,7 +835,7 @@ public class PreviewActivity extends AppCompatActivity {
                     }
                 });
 
-                boolean success = midiGenerator.process(0, totalFrames);
+                boolean success = midiGenerator.process(0, totalFrames, frameStep);
 
                 if (isCancelled() && midiGenerator.getNoteCount() == 0) {
                     return null;
@@ -787,6 +843,7 @@ public class PreviewActivity extends AppCompatActivity {
 
                 publishProgress("phase", "Finalizing MIDI...");
                 midiGenerator.syncNotesStartPosition();
+                midiGenerator.mergeOverlappingNotes();
 
                 List<MidiNote> notes = midiGenerator.getNotes();
                 if (notes.isEmpty()) {
@@ -804,23 +861,85 @@ public class PreviewActivity extends AppCompatActivity {
         }
 
         private File saveMidiFile(List<MidiNote> notes) throws IOException {
-            File musicDir = Environment.getExternalStoragePublicDirectory(
-                    Environment.DIRECTORY_MUSIC);
-            if (!musicDir.exists()) {
-                musicDir.mkdirs();
+            String baseName = wasCancelled ? "video2midi_partial" : "video2midi_output";
+            String displayName = baseName;
+            
+            // Try using MediaStore on Q+ to write directly to public Music directory
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                try {
+                    ContentValues values = new ContentValues();
+                    values.put(MediaStore.Audio.Media.DISPLAY_NAME, displayName + ".mid");
+                    values.put(MediaStore.Audio.Media.MIME_TYPE, "audio/midi");
+                    values.put(MediaStore.Audio.Media.RELATIVE_PATH, Environment.DIRECTORY_MUSIC);
+                    values.put(MediaStore.Audio.Media.IS_PENDING, 1);
+
+                    ContentResolver resolver = getContentResolver();
+                    Uri collectionUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+                    Uri uri = resolver.insert(collectionUri, values);
+                    if (uri != null) {
+                        try (java.io.OutputStream os = resolver.openOutputStream(uri)) {
+                            if (os != null) {
+                                MidiWriter writer = new MidiWriter(preferences.getTempo(), "Video2MIDI");
+                                writer.writeNotes(notes, os);
+                                
+                                values.clear();
+                                values.put(MediaStore.Audio.Media.IS_PENDING, 0);
+                                resolver.update(uri, values, null, null);
+                                
+                                Log.d(TAG, "Saved MIDI to public Music via MediaStore: " + uri.toString());
+                                return new File("/storage/emulated/0/" + Environment.DIRECTORY_MUSIC, displayName + ".mid");
+                            }
+                        } catch (Exception e) {
+                            resolver.delete(uri, null, null);
+                            throw e;
+                        }
+                    }
+                } catch (Exception e) {
+                    Log.w(TAG, "Failed to save via MediaStore, falling back to File API", e);
+                }
             }
 
-            String baseName = wasCancelled ? "video2midi_partial" : "video2midi_output";
-            File outputFile = new File(musicDir, baseName + ".mid");
+            // Fallback for pre-Q or if MediaStore failed:
+            File musicDir = null;
+            try {
+                File publicDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
+                if (!publicDir.exists()) {
+                    publicDir.mkdirs();
+                }
+                musicDir = publicDir;
+            } catch (Exception e) {
+                Log.w(TAG, "Cannot write to public Music directory via File API, falling back to app files dir", e);
+                musicDir = getExternalFilesDir(Environment.DIRECTORY_MUSIC);
+                if (musicDir != null && !musicDir.exists()) {
+                    musicDir.mkdirs();
+                }
+            }
 
+            if (musicDir == null) {
+                musicDir = getCacheDir();
+            }
+
+            File outputFile = new File(musicDir, displayName + ".mid");
             int counter = 1;
             while (outputFile.exists()) {
-                outputFile = new File(musicDir, baseName + "_" + counter + ".mid");
+                outputFile = new File(musicDir, displayName + "_" + counter + ".mid");
                 counter++;
             }
 
             MidiWriter writer = new MidiWriter(preferences.getTempo(), "Video2MIDI");
-            writer.writeNotes(notes, outputFile);
+            try (java.io.FileOutputStream fos = new java.io.FileOutputStream(outputFile)) {
+                writer.writeNotes(notes, fos);
+            }
+
+            // Trigger Media Scanner to make the file immediately visible
+            try {
+                android.media.MediaScannerConnection.scanFile(
+                    PreviewActivity.this,
+                    new String[]{outputFile.getAbsolutePath()},
+                    null,
+                    (path, uri) -> Log.d(TAG, "MediaScanner scanned: " + path + " -> uri: " + uri)
+                );
+            } catch (Exception ignored) {}
 
             return outputFile;
         }

@@ -9,6 +9,8 @@ import com.video2midi.model.KeyPosition;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class MidiGenerator {
@@ -126,6 +128,11 @@ public class MidiGenerator {
     }
 
     public boolean process(int startFrame, int endFrame) {
+        return process(startFrame, endFrame, 1);
+    }
+
+    public boolean process(int startFrame, int endFrame, int frameStep) {
+        if (frameStep < 1) frameStep = 1;
         isCancelled = false;
         notes.clear();
         resetNoteStates();
@@ -141,103 +148,111 @@ public class MidiGenerator {
         int baseNote = prefs.getOctave() * 12;
         int lastNoteCount = 0;
 
-        Log.d(TAG, String.format("Starting processing from frame %d to %d (DEBUG_SAVE_FRAMES: %s)",
-                startFrame, endFrame, DEBUG_SAVE_FRAMES));
+        Log.d(TAG, String.format("Starting processing from frame %d to %d with step %d (DEBUG_SAVE_FRAMES: %s)",
+                startFrame, endFrame, frameStep, DEBUG_SAVE_FRAMES));
 
-        // ДОБАВЛЕНО: Замер времени загрузки первого кадра
-        long frameLoadStart = System.currentTimeMillis();
-        videoProcessor.processFrame(startFrame);
-        long frameLoadTime = System.currentTimeMillis() - frameLoadStart;
-        totalFrameLoadTime += frameLoadTime;
-        frameLoadCount++;
+        // Start sequential decoding (Now fully corrected using presentation timestamp mapping)
+        videoProcessor.startSequentialDecoding(startFrame, frameStep);
 
-        Log.d(TAG, String.format("Initial frame loaded in %d ms", frameLoadTime));
-
-        for (int frame = startFrame; frame < endFrame && !isCancelled; frame++) {
-            // ДОБАВЛЕНО: Замер времени загрузки кадра
-            frameLoadStart = System.currentTimeMillis();
-            boolean frameLoaded = videoProcessor.processFrame(frame);
-            frameLoadTime = System.currentTimeMillis() - frameLoadStart;
-
+        try {
+            // ДОБАВЛЕНО: Замер времени загрузки первого кадра
+            long frameLoadStart = System.currentTimeMillis();
+            videoProcessor.processFrame(startFrame);
+            long frameLoadTime = System.currentTimeMillis() - frameLoadStart;
             totalFrameLoadTime += frameLoadTime;
             frameLoadCount++;
 
-            if (!frameLoaded) {
-                Log.w(TAG, String.format("Failed to process frame %d (load time: %d ms)",
-                        frame, frameLoadTime));
-                continue;
-            }
+            Log.d(TAG, String.format("Initial frame loaded in %d ms", frameLoadTime));
 
-            // ДОБАВЛЕНО: Дебаг сохранение кадра
-            if (DEBUG_SAVE_FRAMES && debugFrameDir != null && frame % DEBUG_SAVE_INTERVAL == 0) {
-                long saveStart = System.currentTimeMillis();
-                saveDebugFrame(frame);
-                long saveTime = System.currentTimeMillis() - saveStart;
-                totalFrameSaveTime += saveTime;
-                frameSaveCount++;
+            for (int frame = startFrame; frame < endFrame && !isCancelled; frame += frameStep) {
+                // ДОБАВЛЕНО: Замер времени загрузки кадра
+                frameLoadStart = System.currentTimeMillis();
+                boolean frameLoaded = videoProcessor.processFrame(frame);
+                frameLoadTime = System.currentTimeMillis() - frameLoadStart;
 
-                Log.v(TAG, String.format("Frame %d: load=%d ms, save=%d ms",
-                        frame, frameLoadTime, saveTime));
-            } else if (frame % 100 == 0) {
-                // Логируем время загрузки для обычных кадров
-                Log.v(TAG, String.format("Frame %d loaded in %d ms", frame, frameLoadTime));
-            }
+                totalFrameLoadTime += frameLoadTime;
+                frameLoadCount++;
 
-            processFrame(frame, fps, baseNote);
+                if (!frameLoaded) {
+                    Log.w(TAG, String.format("Failed to process frame %d (load time: %d ms)",
+                            frame, frameLoadTime));
+                    continue;
+                }
 
-            if (notes.size() != lastNoteCount) {
-                lastNoteCount = notes.size();
+                // ДОБАВЛЕНО: Дебаг сохранение кадра
+                if (DEBUG_SAVE_FRAMES && debugFrameDir != null && frame % DEBUG_SAVE_INTERVAL == 0) {
+                    long saveStart = System.currentTimeMillis();
+                    saveDebugFrame(frame);
+                    long saveTime = System.currentTimeMillis() - saveStart;
+                    totalFrameSaveTime += saveTime;
+                    frameSaveCount++;
+
+                    Log.v(TAG, String.format("Frame %d: load=%d ms, save=%d ms",
+                            frame, frameLoadTime, saveTime));
+                } else if (frame % 100 == 0) {
+                    // Логируем время загрузки для обычных кадров
+                    Log.v(TAG, String.format("Frame %d loaded in %d ms", frame, frameLoadTime));
+                }
+
+                processFrame(frame, fps, baseNote);
+
+                if (notes.size() != lastNoteCount) {
+                    lastNoteCount = notes.size();
+                    if (progressCallback != null) {
+                        progressCallback.onNotesUpdated(notes.size());
+                    }
+                }
+
                 if (progressCallback != null) {
-                    progressCallback.onNotesUpdated(notes.size());
+                    if (frame % 10 == 0) {
+                        progressCallback.onProgress(frame - startFrame, endFrame - startFrame);
+                    }
+                    progressCallback.onFrameProcessed(frame);
+                }
+
+                if (frame % 100 == 0) {
+                    long etime = (System.currentTimeMillis() - StartTimeMillis) / 1000;
+                    float progress = (frame - startFrame) * 100.0f / (endFrame - startFrame);
+
+                    float framesPerSecond = (frame - startFrame) / (float)Math.max(1, etime);
+                    int remainingFrames = endFrame - frame;
+                    int estimatedSecondsLeft = (int)(remainingFrames / Math.max(0.1f, framesPerSecond));
+
+                    // ДОБАВЛЕНО: Средние времена загрузки и сохранения
+                    long avgLoadTime = frameLoadCount > 0 ? totalFrameLoadTime / frameLoadCount : 0;
+                    long avgSaveTime = frameSaveCount > 0 ? totalFrameSaveTime / frameSaveCount : 0;
+
+                    Log.d(TAG, String.format("Frame: %d/%d (%.1f%%) | Notes: %d | Elapsed: %ds | ETA: %ds | Speed: %.1f fps | Avg Load: %d ms | Avg Save: %d ms",
+                            frame, endFrame, progress, notes.size(), etime, estimatedSecondsLeft,
+                            framesPerSecond, avgLoadTime, avgSaveTime));
                 }
             }
+
+            finalizeNotes(endFrame, fps, baseNote);
 
             if (progressCallback != null) {
-                if (frame % 10 == 0) {
-                    progressCallback.onProgress(frame - startFrame, endFrame - startFrame);
-                }
-                progressCallback.onFrameProcessed(frame);
+                progressCallback.onNotesUpdated(notes.size());
             }
 
-            if (frame % 100 == 0) {
-                long etime = (System.currentTimeMillis() - StartTimeMillis) / 1000;
-                float progress = (frame - startFrame) * 100.0f / (endFrame - startFrame);
+            long totalTime = (System.currentTimeMillis() - StartTimeMillis) / 1000;
 
-                float framesPerSecond = (frame - startFrame) / (float)Math.max(1, etime);
-                int remainingFrames = endFrame - frame;
-                int estimatedSecondsLeft = (int)(remainingFrames / Math.max(0.1f, framesPerSecond));
+            // ДОБАВЛЕНО: Финальная статистика
+            long avgLoadTime = frameLoadCount > 0 ? totalFrameLoadTime / frameLoadCount : 0;
+            long avgSaveTime = frameSaveCount > 0 ? totalFrameSaveTime / frameSaveCount : 0;
 
-                // ДОБАВЛЕНО: Средние времена загрузки и сохранения
-                long avgLoadTime = frameLoadCount > 0 ? totalFrameLoadTime / frameLoadCount : 0;
-                long avgSaveTime = frameSaveCount > 0 ? totalFrameSaveTime / frameSaveCount : 0;
+            Log.d(TAG, String.format("Processing %s. Generated %d notes in %d seconds",
+                    isCancelled ? "cancelled" : "complete", notes.size(), totalTime));
+            Log.d(TAG, String.format("Frame loading stats: count=%d, total=%d ms, avg=%d ms",
+                    frameLoadCount, totalFrameLoadTime, avgLoadTime));
 
-                Log.d(TAG, String.format("Frame: %d/%d (%.1f%%) | Notes: %d | Elapsed: %ds | ETA: %ds | Speed: %.1f fps | Avg Load: %d ms | Avg Save: %d ms",
-                        frame, endFrame, progress, notes.size(), etime, estimatedSecondsLeft,
-                        framesPerSecond, avgLoadTime, avgSaveTime));
+            if (DEBUG_SAVE_FRAMES && frameSaveCount > 0) {
+                Log.d(TAG, String.format("Frame saving stats: count=%d, total=%d ms, avg=%d ms",
+                        frameSaveCount, totalFrameSaveTime, avgSaveTime));
+                Log.d(TAG, "Debug frames saved to: " + debugFrameDir.getAbsolutePath());
             }
-        }
 
-        finalizeNotes(endFrame, fps, baseNote);
-
-        if (progressCallback != null) {
-            progressCallback.onNotesUpdated(notes.size());
-        }
-
-        long totalTime = (System.currentTimeMillis() - StartTimeMillis) / 1000;
-
-        // ДОБАВЛЕНО: Финальная статистика
-        long avgLoadTime = frameLoadCount > 0 ? totalFrameLoadTime / frameLoadCount : 0;
-        long avgSaveTime = frameSaveCount > 0 ? totalFrameSaveTime / frameSaveCount : 0;
-
-        Log.d(TAG, String.format("Processing %s. Generated %d notes in %d seconds",
-                isCancelled ? "cancelled" : "complete", notes.size(), totalTime));
-        Log.d(TAG, String.format("Frame loading stats: count=%d, total=%d ms, avg=%d ms",
-                frameLoadCount, totalFrameLoadTime, avgLoadTime));
-
-        if (DEBUG_SAVE_FRAMES && frameSaveCount > 0) {
-            Log.d(TAG, String.format("Frame saving stats: count=%d, total=%d ms, avg=%d ms",
-                    frameSaveCount, totalFrameSaveTime, avgSaveTime));
-            Log.d(TAG, "Debug frames saved to: " + debugFrameDir.getAbsolutePath());
+        } finally {
+            videoProcessor.stopSequentialDecoding();
         }
 
         return !isCancelled;
@@ -852,5 +867,65 @@ public class MidiGenerator {
                 }
             }
         }
+    }
+
+    public void mergeOverlappingNotes() {
+        if (notes.isEmpty()) return;
+
+        int originalCount = notes.size();
+        // Group notes by pitch (note number)
+        java.util.Map<Integer, List<MidiNote>> notesByPitch = new java.util.HashMap<>();
+        for (MidiNote note : notes) {
+            List<MidiNote> list = notesByPitch.get(note.getNote());
+            if (list == null) {
+                list = new ArrayList<>();
+                notesByPitch.put(note.getNote(), list);
+            }
+            list.add(note);
+        }
+
+        List<MidiNote> mergedList = new ArrayList<>();
+        float mergeThresholdSeconds = 0.08f; // 80ms gap threshold for merging flickers
+
+        for (java.util.Map.Entry<Integer, List<MidiNote>> entry : notesByPitch.entrySet()) {
+            List<MidiNote> pitchNotes = entry.getValue();
+            
+            // Sort by start time
+            Collections.sort(pitchNotes, new Comparator<MidiNote>() {
+                @Override
+                public int compare(MidiNote n1, MidiNote n2) {
+                    return Float.compare(n1.getTime(), n2.getTime());
+                }
+            });
+
+            MidiNote current = pitchNotes.get(0);
+            for (int i = 1; i < pitchNotes.size(); i++) {
+                MidiNote next = pitchNotes.get(i);
+                
+                float currentEnd = current.getTime() + current.getDuration();
+                float nextStart = next.getTime();
+
+                // If they overlap or the gap is less than the threshold, merge them
+                if (nextStart <= currentEnd + mergeThresholdSeconds) {
+                    float newEnd = Math.max(currentEnd, nextStart + next.getDuration());
+                    current.setDuration(newEnd - current.getTime());
+                } else {
+                    mergedList.add(current);
+                    current = next;
+                }
+            }
+            mergedList.add(current);
+        }
+
+        // Re-sort the final list by start time
+        Collections.sort(mergedList, new Comparator<MidiNote>() {
+            @Override
+            public int compare(MidiNote n1, MidiNote n2) {
+                return Float.compare(n1.getTime(), n2.getTime());
+            }
+        });
+
+        this.notes = mergedList;
+        Log.d(TAG, "Merged overlapping notes. Count reduced from " + originalCount + " to " + mergedList.size());
     }
 }

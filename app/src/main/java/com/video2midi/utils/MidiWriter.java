@@ -23,16 +23,40 @@ public class MidiWriter {
     }
     
     public void writeNotes(List<MidiNote> notes, File outputFile) throws IOException {
-        // Сортируем ноты по времени
-        List<MidiNote> sortedNotes = new ArrayList<>(notes);
-        Collections.sort(sortedNotes, new Comparator<MidiNote>() {
+        try (FileOutputStream fos = new FileOutputStream(outputFile)) {
+            writeNotes(notes, fos);
+        }
+        Log.d(TAG, "MIDI file successfully written: " + outputFile.getAbsolutePath() + " with " + notes.size() + " notes");
+    }
+
+    public void writeNotes(List<MidiNote> notes, java.io.OutputStream os) throws IOException {
+        List<MidiEvent> events = new ArrayList<>();
+        
+        // Разделяем каждую ноту на события нажатия (Note ON) и отпускания (Note OFF)
+        for (MidiNote note : notes) {
+            long noteTick = (long) (note.getTime() * ticksPerQuarterNote);
+            long durationTicks = (long) (note.getDuration() * ticksPerQuarterNote);
+            long endTick = noteTick + durationTicks;
+            
+            // Note ON event (0x90)
+            events.add(new MidiEvent(noteTick, 0x90, note.getChannel(), note.getNote(), note.getVelocity()));
+            // Note OFF event (0x80)
+            events.add(new MidiEvent(endTick, 0x80, note.getChannel(), note.getNote(), 0));
+        }
+        
+        // Сортируем все события по времени их возникновения
+        Collections.sort(events, new Comparator<MidiEvent>() {
             @Override
-            public int compare(MidiNote n1, MidiNote n2) {
-                return Float.compare(n1.getTime(), n2.getTime());
+            public int compare(MidiEvent e1, MidiEvent e2) {
+                if (e1.tick != e2.tick) {
+                    return Long.compare(e1.tick, e2.tick);
+                }
+                // Если тики совпадают, записываем сначала Note OFF (0x80), затем Note ON (0x90)
+                return Integer.compare(e1.type, e2.type);
             }
         });
         
-        // Создаем MIDI файл вручную
+        // Создаем MIDI данные трека
         ByteArrayOutputStream trackData = new ByteArrayOutputStream();
         
         // Track name event
@@ -47,27 +71,18 @@ public class MidiWriter {
         };
         writeMetaEvent(trackData, 0, 0x51, tempoBytes);
         
-        // Добавляем ноты
+        // Записываем события с дельта-тиками
         long lastTick = 0;
-        for (MidiNote note : sortedNotes) {
-            long noteTick = (long) (note.getTime() * ticksPerQuarterNote);
-            long durationTicks = (long) (note.getDuration() * ticksPerQuarterNote);
-            
-            // Note ON
-            long deltaTime = noteTick - lastTick;
+        for (MidiEvent event : events) {
+            long deltaTime = event.tick - lastTick;
+            if (deltaTime < 0) {
+                deltaTime = 0; // Защита от переполнения
+            }
             writeVariableLength(trackData, deltaTime);
-            trackData.write(0x90 | note.getChannel()); // Note ON
-            trackData.write(note.getNote());
-            trackData.write(note.getVelocity());
-            lastTick = noteTick;
-            
-            // Note OFF
-            deltaTime = durationTicks;
-            writeVariableLength(trackData, deltaTime);
-            trackData.write(0x80 | note.getChannel()); // Note OFF
-            trackData.write(note.getNote());
-            trackData.write(0);
-            lastTick = noteTick + durationTicks;
+            trackData.write(event.type | event.channel); // Статус байт (тип + канал)
+            trackData.write(event.note);
+            trackData.write(event.velocity);
+            lastTick = event.tick;
         }
         
         // End of track
@@ -78,24 +93,19 @@ public class MidiWriter {
         
         byte[] track = trackData.toByteArray();
         
-        // Записываем MIDI файл
-        FileOutputStream fos = new FileOutputStream(outputFile);
+        // Header chunk (MThd)
+        os.write("MThd".getBytes());
+        writeInt32(os, 6); // Длина заголовка
+        writeInt16(os, 0); // Формат 0 (один трек)
+        writeInt16(os, 1); // 1 трек
+        writeInt16(os, ticksPerQuarterNote);
         
-        // Header chunk
-        fos.write("MThd".getBytes());
-        writeInt32(fos, 6); // Header length
-        writeInt16(fos, 0); // Format 0
-        writeInt16(fos, 1); // 1 track
-        writeInt16(fos, ticksPerQuarterNote);
+        // Track chunk (MTrk)
+        os.write("MTrk".getBytes());
+        writeInt32(os, track.length);
+        os.write(track);
         
-        // Track chunk
-        fos.write("MTrk".getBytes());
-        writeInt32(fos, track.length);
-        fos.write(track);
-        
-        fos.close();
-        
-        Log.d(TAG, "MIDI file written: " + outputFile.getAbsolutePath());
+        os.flush();
     }
     
     private void writeMetaEvent(ByteArrayOutputStream out, long deltaTime, 
@@ -125,22 +135,39 @@ public class MidiWriter {
         }
     }
     
-    private void writeInt32(FileOutputStream out, int value) throws IOException {
+    private void writeInt32(java.io.OutputStream out, int value) throws IOException {
         out.write((value >> 24) & 0xFF);
         out.write((value >> 16) & 0xFF);
         out.write((value >> 8) & 0xFF);
         out.write(value & 0xFF);
     }
     
-    private void writeInt16(FileOutputStream out, int value) throws IOException {
+    private void writeInt16(java.io.OutputStream out, int value) throws IOException {
         out.write((value >> 8) & 0xFF);
         out.write(value & 0xFF);
     }
     
-    // Внутренний класс для ByteArrayOutputStream
+    // Внутренний класс для удобства записи
     private static class ByteArrayOutputStream extends java.io.ByteArrayOutputStream {
         public void write(byte[] b) throws IOException {
             super.write(b, 0, b.length);
+        }
+    }
+
+    // Вспомогательный класс для представления единичного MIDI события
+    private static class MidiEvent {
+        long tick;
+        int type; // 0x90 (Note ON) или 0x80 (Note OFF)
+        int channel;
+        int note;
+        int velocity;
+
+        public MidiEvent(long tick, int type, int channel, int note, int velocity) {
+            this.tick = tick;
+            this.type = type;
+            this.channel = channel;
+            this.note = note;
+            this.velocity = velocity;
         }
     }
 }
