@@ -885,7 +885,7 @@ public class MidiGenerator {
         }
 
         List<MidiNote> mergedList = new ArrayList<>();
-        float mergeThresholdSeconds = 0.08f; // 80ms gap threshold for merging flickers
+        float mergeThresholdSeconds = 0.0f; // Set to 0.0f to preserve 1-frame gaps (where light turns off) so notes don't get merged incorrectly
 
         for (java.util.Map.Entry<Integer, List<MidiNote>> entry : notesByPitch.entrySet()) {
             List<MidiNote> pitchNotes = entry.getValue();
